@@ -1,0 +1,1 @@
+INSERT INTO user (email, first_name, last_name, password, phone) VALUES ('321321', '321321', '321321','321321','321321');
