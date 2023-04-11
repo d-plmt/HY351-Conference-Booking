@@ -40,7 +40,7 @@ public class Employee {
     private String department;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "id", insertable = false, updatable = false)
     @MapsId
     private User user;
 

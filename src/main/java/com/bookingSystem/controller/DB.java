@@ -23,9 +23,6 @@ import com.bookingSystem.timeSlot.TimeSlot;
 import com.bookingSystem.user.Admin;
 import com.bookingSystem.user.Employee;
 import com.bookingSystem.user.User;
-import com.bookingSystem.user.UserRepository;
-
-import net.bytebuddy.asm.Advice.Local;
 
 @RestController
 @RequestMapping("/db")
@@ -49,12 +46,15 @@ public class DB {
     @Transactional
     @GetMapping("/init")
     public void initDB() {
-
-        
+        initUsers();
+        initRooms();
+        initTimeSlots();
+        initRequests();
+        initReservations();
     }
 
     @Transactional
-    @GetMapping("/init/users")
+    // @GetMapping("/init/users")
     public List<Object> initUsers() {
         User user;
         Admin admin;
@@ -108,7 +108,7 @@ public class DB {
 
 
     @Transactional
-    @GetMapping("/init/rooms")
+    // @GetMapping("/init/rooms")
     public List<Object> initRooms() {
 
         Room room;
@@ -140,7 +140,7 @@ public class DB {
 
 
     @Transactional
-    @GetMapping("/init/timeslots")
+    // @GetMapping("/init/timeslots")
     public List<Object> initTimeSlots() {
         TimeSlot timeSlot;
         List<Object> timeSlotList = new ArrayList<>();
@@ -197,7 +197,7 @@ public class DB {
     }
 
     @Transactional
-    @GetMapping("/init/requests")
+    // @GetMapping("/init/requests")
     public List<Object> initRequests() {
         ReservationRequest request;
         ReservationRequestId requestId; 
@@ -288,7 +288,7 @@ public class DB {
     }
 
     @Transactional
-    @GetMapping("/init/reservations")
+    // @GetMapping("/init/reservations")
     public List<Object> initReservations() {
         Reservation reservation;
         ReservationRequest request;
@@ -298,9 +298,9 @@ public class DB {
         Room room;
         List<Object> reservationList = new ArrayList<>();
 
+
         employee = userController.findEmployee(7);
         room = roomController.find(4);
-
         reservationId = new ReservationId(Date.valueOf(LocalDate.of(2023, 6, 15)), employee, room);
         requestId = new ReservationRequestId(Date.valueOf(LocalDate.of(2023, 6, 15)), employee, room);
         request = reservationController.findReq(requestId);
@@ -308,15 +308,18 @@ public class DB {
         request.setStatus("approved");
         reservationController.updateReq(request, requestId);
         reservation = reservationController.newRes(new Reservation(reservationId, request.getPurpose(), request.getEmployee(), request.getTimeSlots()));
-        // reservationId = reservationController.findRes(new ReservationId(Date.valueOf(LocalDate.of(2023, 6, 15)), employee, room)).getId();
+        reservationList.add(reservation);
 
-        // reservation = new Reservation(reservationId, "teleconference with US department", employee, addTimeSlots(new int[] {10, 11, 12, 13}));
-        // request = entityManager.find(ReservationRequest.class, new ReservationRequestId(Date.valueOf(LocalDate.of(2023, 6, 15)), employee, room));
-        // reservationList.add(request);
-        // request.setStatus("approved");
-        // entityManager.persist(reservation);
-        // reservationList.add(reservation);
-
+        employee = userController.findEmployee(3);
+        room = roomController.find(6);
+        reservationId = new ReservationId(Date.valueOf(LocalDate.of(2023, 6, 14)), employee, room);
+        requestId = new ReservationRequestId(Date.valueOf(LocalDate.of(2023, 6, 14)), employee, room);
+        request = reservationController.findReq(requestId);
+        request.setAdmin(new Admin(10, null, null));
+        request.setStatus("denied");
+        request.setDeniedReason("insufficient funds for new product. presentation cancelled by CEO.");
+        reservationController.updateReq(request, requestId);
+        reservationController.deleteReservationRequestTimeSlots(Date.valueOf(LocalDate.of(2023,6,14)),3,6);
         return reservationList;
     }
 }

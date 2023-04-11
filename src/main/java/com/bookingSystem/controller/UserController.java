@@ -1,5 +1,6 @@
 package com.bookingSystem.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bookingSystem.DTO.AdminDTO;
+import com.bookingSystem.DTO.EmployeeDTO;
+import com.bookingSystem.DTO.UserDTO;
 import com.bookingSystem.user.Admin;
 import com.bookingSystem.user.AdminRepository;
 import com.bookingSystem.user.Employee;
@@ -33,11 +37,25 @@ public class UserController {
     @Autowired
     private final AdminRepository adminRepo;
 
+    @Autowired
+    private final UserDTO userDTO;
+
+    @Autowired
+    private final EmployeeDTO employeeDTO;
+
+    @Autowired
+    private final AdminDTO adminDTO;
+
     //  USERS //
     
     @GetMapping("/users")
-    List<User> all() {
-        return userRepo.findAll();
+    List<UserDTO> all() {
+        List<User> users = userRepo.findAll();
+        List<UserDTO> dtos = new ArrayList<>();
+        for (User user: users) {
+            dtos.add(userDTO.convertToDTO(user));
+        }
+        return dtos;
     }
 
     @GetMapping("/users/{id}")
@@ -69,8 +87,13 @@ public class UserController {
     // EMPLOYEES //
 
     @GetMapping("/employees")
-    List<Employee> employeeAll() {
-        return employeeRepo.findAll();
+    List<EmployeeDTO> employeeAll() {
+        List<Employee> employees = employeeRepo.findAll();
+        List<EmployeeDTO> dtos = new ArrayList<>();
+        for (Employee employee: employees) {
+            dtos.add(employeeDTO.convertToDTO(employee));
+        }
+        return dtos;
     }
 
     @GetMapping("/employees/{id}")
@@ -100,8 +123,13 @@ public class UserController {
     // ADMINS //
 
     @GetMapping("/admins")
-    List<Admin> adminAll() {
-        return adminRepo.findAll();
+    List<AdminDTO> adminAll() {
+        List<Admin> admins = adminRepo.findAll();
+        List<AdminDTO> dtos = new ArrayList<>();
+        for (Admin admin: admins) {
+            dtos.add(adminDTO.convertToDTO(admin));
+        }
+        return dtos;
     }
 
     @GetMapping("/admins/{id}")
