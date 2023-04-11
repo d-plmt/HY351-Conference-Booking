@@ -3,7 +3,6 @@ package com.bookingSystem.reservationRequest;
 import java.io.Serializable;
 import java.sql.Date;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -14,15 +13,17 @@ import com.bookingSystem.user.Employee;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Embeddable
-@Getter
 @Setter
+@Getter
 @AllArgsConstructor
-@ToString
+@NoArgsConstructor
 @EqualsAndHashCode
+@ToString
+@Embeddable
 public class ReservationRequestId implements Serializable {
 
     private Date date;

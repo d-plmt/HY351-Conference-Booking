@@ -17,13 +17,18 @@ import javax.persistence.Table;
 import com.bookingSystem.reservationRequest.ReservationRequest;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Setter
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 @Entity
 @Table(name = "admin")
 public class Admin {
@@ -32,20 +37,11 @@ public class Admin {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
     @MapsId
     private User user;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "admin")
     private List<ReservationRequest> reservationRequests;
-
-    @Override
-    public String toString() {
-        return "Admin [id=" + id + ", user=" + user + ", reservationRequests=" + reservationRequests + "]";
-    }
-
-    public Admin(Integer id) {
-        this.id = id;
-    }
 }

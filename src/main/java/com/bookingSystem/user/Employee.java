@@ -18,14 +18,18 @@ import com.bookingSystem.reservation.Reservation;
 import com.bookingSystem.reservationRequest.ReservationRequest;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 @Entity
 @Table(name = "employee")
 public class Employee {
@@ -35,11 +39,7 @@ public class Employee {
 
     private String department;
 
-    // @OneToOne(cascade = CascadeType.ALL)
-    // @JoinColumn(name = "id", referencedColumnName = "id")
-    // private User user;
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
     @MapsId
     private User user;
@@ -49,11 +49,5 @@ public class Employee {
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     private List<ReservationRequest> reservationRequests;
-
-    @Override
-    public String toString() {
-        return "Employee [id=" + id + ", department=" + department + ", user=" + user + ", reservations=" + reservations
-                + ", reservationRequests=" + reservationRequests + "]";
-    }
 
 }

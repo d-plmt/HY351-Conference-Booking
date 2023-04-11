@@ -16,13 +16,18 @@ import com.bookingSystem.reservation.Reservation;
 import com.bookingSystem.reservationRequest.ReservationRequest;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Setter
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 @Entity
 @Table(name = "time_slot")
 public class TimeSlot {
@@ -34,24 +39,4 @@ public class TimeSlot {
 
     private Integer startTime;
     private Integer endTime;
-    
-    public TimeSlot(Integer startTime, Integer endTime) {
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
-    @Override
-    public String toString() {
-        return "TimeSlot [id=" + id + ", startTime=" + startTime + ", endTime=" + endTime + "]";
-    }
-
-    
-
-    // @ManyToMany(cascade = CascadeType.ALL, mappedBy = "timeSlots")
-    // private List<Reservation> reservations = new ArrayList<>();
-
-    // @ManyToMany(cascade = CascadeType.ALL, mappedBy = "timeSlots")
-    // private List<ReservationRequest> reservationRequests = new ArrayList<>();
-
-
-
 }

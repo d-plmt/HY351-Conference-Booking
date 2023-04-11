@@ -16,14 +16,20 @@ import com.bookingSystem.timeSlot.TimeSlot;
 import com.bookingSystem.user.Admin;
 import com.bookingSystem.user.Employee;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 
 @Setter
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 @Entity
 @Table(name = "reservation_request")
 public class ReservationRequest {
@@ -64,14 +70,5 @@ public class ReservationRequest {
             @JoinColumn(name = "timeslot_id") }
     )
     List<TimeSlot> timeSlots = new ArrayList<>();
-
-    public ReservationRequest(ReservationRequestId id, String purpose, String status, String deniedReason, Admin admin, List<TimeSlot> timeSlots) {
-        this.id = id;
-        this.purpose = purpose;
-        this.status = status;
-        this.deniedReason = deniedReason;
-        this.admin = admin;
-        this.timeSlots = timeSlots;
-    }
 
 }

@@ -24,9 +24,9 @@ import lombok.ToString;
 @Setter
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-@NoArgsConstructor
 @Entity
 @Table(name = "room")
 public class Room {
