@@ -1,0 +1,8 @@
+.root {
+  width: 100vw;
+  height: 100vh;
+  background-color: #282736;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 18px;
+  overflow: hidden;
+}
