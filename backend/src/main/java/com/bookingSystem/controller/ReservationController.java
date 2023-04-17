@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,7 +46,7 @@ public class ReservationController {
     @Autowired
     private final ReservationDTO resDTO;
 
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/reservations")
     List<ReservationDTO> allRes() {
         List<Reservation> reservations = resRepo.findAll();
@@ -56,17 +57,20 @@ public class ReservationController {
         return dtos;
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/reservations/{id}")
     Reservation findRes(@PathVariable ReservationId id) {
         return resRepo.findById(id)
         .orElseThrow(() -> new RuntimeException());
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/reservations")
     Reservation newRes(@RequestBody Reservation newRes) {
         return resRepo.save(newRes);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/reservations/{id}")
     Reservation updateRes(@RequestBody Reservation newRes, @PathVariable ReservationId id) {
         return resRepo.findById(id)
@@ -84,6 +88,7 @@ public class ReservationController {
 
     // REQUESTS //
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/requests")
     List<RequestDTO> allReq() {
         List<ReservationRequest> requests = reqRepo.findAll();
@@ -94,17 +99,33 @@ public class ReservationController {
         return dtos;
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/requests/active")
+    List<RequestDTO> allActiveReq() {
+        List<ReservationRequest> requests = reqRepo.findAll();
+        List<RequestDTO> dtos = new ArrayList<>();
+        for (ReservationRequest request: requests) {
+            if (!request.getStatus().equals("denied")) {
+                dtos.add(reqDTO.convertToDTO(request));
+            }
+        }
+        return dtos;
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/requests/{id}")
     ReservationRequest findReq(@PathVariable ReservationRequestId id) {
         return reqRepo.findById(id)
         .orElseThrow(() -> new RuntimeException());
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/requests")
     ReservationRequest newReq(@RequestBody ReservationRequest newReq) {
         return reqRepo.save(newReq);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/requests/{id}")
     ReservationRequest updateReq(@RequestBody ReservationRequest newReq, @PathVariable ReservationRequestId id) {
         return reqRepo.findById(id)
@@ -125,6 +146,7 @@ public class ReservationController {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/requests/{date}+{booked_by}+{room_id}")
     void deleteReservationRequestTimeSlots(@PathVariable Date date, @PathVariable Integer booked_by, @PathVariable Integer room_id) {
         String sql = "DELETE FROM reservation_request_timeslot WHERE reservation_date = '"+date+"' AND booked_by = "+booked_by+" AND room_id = "+room_id+";";
