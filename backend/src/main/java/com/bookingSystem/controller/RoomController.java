@@ -1,5 +1,6 @@
 package com.bookingSystem.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bookingSystem.DTO.RoomDTO;
 import com.bookingSystem.room.Room;
 import com.bookingSystem.room.RoomRepository;
 
@@ -19,12 +21,19 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class RoomController {
 
+    private final RoomDTO roomDTO;
+
     @Autowired
     private final RoomRepository repo;
 
     @GetMapping("/rooms")
-    List<Room> all() {
-        return repo.findAll();
+    List<RoomDTO> all() {
+        List<Room> rooms = repo.findAll();
+        List<RoomDTO> dtos = new ArrayList<>();
+        for (Room room: rooms) {
+            dtos.add(roomDTO.convertToDTO(room));
+        }
+        return dtos;
     }
 
     @GetMapping("/rooms/{id}")
