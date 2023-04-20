@@ -1,12 +1,13 @@
 .header {
     width: 100%;
     height: 10vh;
-    background-color: rgb(198, 201, 243);
+    background-color: rgb(198, 218, 255);
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 38px;
     font-style: normal;
+    color:rgb(64, 64, 64);
 }
 
 img {

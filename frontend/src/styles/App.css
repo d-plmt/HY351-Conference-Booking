@@ -1,8 +1,13 @@
 .root {
   width: 100vw;
   height: 100vh;
-  background-color: #f5ebff;
+  background-color: #f1f8fa;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 18px;
   overflow: scroll;
+  color:rgb(64, 64, 64);
+}
+
+.btn {
+  color:rgb(64, 64, 64);
 }

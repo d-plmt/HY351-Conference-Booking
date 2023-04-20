@@ -12,7 +12,7 @@ export const LoginPage = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            sessionStorage.setItem('userType', 'employee');
+            sessionStorage.setItem('userType', 'admin');
             sessionStorage.setItem('user', 'user1');
             navigate('/');
             // const response = await fetch('', {

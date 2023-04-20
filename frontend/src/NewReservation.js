@@ -1,23 +1,30 @@
 import { useNavigate } from "react-router-dom";
-import { Calendar, DateLocalizer, momentLocalizer} from 'react-big-calendar'
 import DatePicker from "react-datepicker";
 import { useEffect, useState } from 'react';
+import { Table } from "react-bootstrap";
 import moment from 'moment'
-import ReactDataGrid from 'react-data-grid';
+import './styles/NewReservation.css';
+
+
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import './styles/NewReservation.css';
 import "react-datepicker/dist/react-datepicker.css";
 export const NewReservation = () => {
     const navigate = useNavigate();
-    const localizer = momentLocalizer(moment);
+
     const [rooms, setRooms] = useState([]);
     const [activeRequests, setActiveRequests] = useState([]);
+    const [timeSlots, setTimeSlots] = useState([]);
+
+    const [showAvailableRooms, setShowAvailableRooms] = useState(false);
+    const [availableRooms, setAvailableRooms] = useState([]);
+    
     const [selectedDate, setSelectedDate] = useState("");
+    const [selectedTimeSlots, setSelectedTimeSlots] = useState({});
     const [roomSize, setRoomSize] = useState(null);
     const [accessibility, setAccessibility] = useState(false);
     const [purpose, setPurpose] = useState("");
-    const [showAvailableRooms, setShowAvailableRooms] = useState(false);
-    const [timeSlots, setTimeSlots] = useState([]);
+    const [selectedRoom, setSelectedRoom] = useState();
 
     useEffect(() => {
         const fetchRooms = async () => {
@@ -27,7 +34,6 @@ export const NewReservation = () => {
                 for (let i = 0; i < data.length; i++) {
                     let roomId = i+1;
                     data[i].name = "Room "+roomId;
-                    data[i].key = roomId;
                 }
                 setRooms(data);
             }
@@ -47,15 +53,7 @@ export const NewReservation = () => {
             try {
                 const response = await fetch('http://localhost:8080/timeslots');
                 const data = await response.json();
-                let slots = [];
-                for (let slot of data) {
-                    slots.push({
-                        id: slot.id,
-                        title: `${slot.startTime} - ${slot.endTime}`,
-                        count: 7
-                    })
-                }
-                setTimeSlots(slots);
+                setTimeSlots(data);
             }
             catch (error) {
                 console.error(error)
@@ -74,23 +72,6 @@ export const NewReservation = () => {
             try {
                 const response = await fetch('http://localhost:8080/requests/active');
                 const data = await response.json();
-                // let events = [];
-                // for (let i = 0; i< data.length; i++) {
-                //     let startTime = data[i].timeSlots[0].startTime;
-                //     if (startTime.toString().length === 1) startTime = "0" + startTime.toString();
-                //     let endTime = data[i].timeSlots[data[i].timeSlots.length-1].endTime;
-                //     if (endTime.toString().length === 1) endTime = "0" + endTime.toString();
-                //     events.push({
-                //         id: i,
-                //         title: data[i].purpose,
-                //         allDay: false,
-                //         resource: data[i].id.roomId,
-                //         employee: data[i].id.employeeId,
-                //         status: data[i].status,
-                //         start: new Date(`${data[i].id.date}T${startTime}:00:00`),
-                //         end: new Date(`${data[i].id.date}T${endTime}:00:00`)
-                //     });
-                // }
                 setActiveRequests(data);
             }
             catch (error) {
@@ -102,94 +83,148 @@ export const NewReservation = () => {
         if (activeRequests.length === 0) {
             fetchRequests();
         }
-        console.log(activeRequests);
+        // console.log(activeRequests);
     }, [activeRequests])
-
-    const handleDateSelect = (selected) => {
-        setSelectedDate(selected);
-    }
 
     const isWeekday = (date) => {
         const day = date.getDay();
         return day !== 0 && day !== 6;
     };
 
+    const handleDuration = (duration) => {
+        let lastSlotEnd;
+        if (duration < 60) {
+            lastSlotEnd = selectedDate.getHours()+1;
+        }
+        else {
+            lastSlotEnd = selectedDate.getHours() + Math.ceil(duration/60);
+        }
+        const slots = {
+            startTimeSlot: timeSlots.find((timeSlot) => timeSlot.startTime === selectedDate.getHours()),
+            endTimeSlot: timeSlots.find((timeSlot) => timeSlot.endTime === (lastSlotEnd))
+        };
+        setSelectedTimeSlots(slots);
+    }
+
     const searchAvailability = (e) => {
         e.preventDefault();
         setShowAvailableRooms(true);
-        console.log(rooms);
-        console.log(timeSlots);
+
+        let validRooms = rooms.filter((room) => 
+            room.capacity >= roomSize &&
+            (accessibility? room.accessibility : true)
+        );
+
+        const unavailableRooms = new Set();
+        activeRequests.forEach((request) => {
+            if (request.id.date === moment(selectedDate).format('YYYY-MM-DD') && validRooms.some((room => room.id === request.id.roomId))) {
+                if (request.timeSlots.some((timeSlot) => (
+                    ((timeSlot.id === selectedTimeSlots.startTimeSlot.id) || (timeSlot.id === selectedTimeSlots.endTimeSlot.id))
+                ))) {
+                    unavailableRooms.add(request.id.roomId);
+                }
+            }
+        });
+        validRooms = validRooms.filter((room) => !unavailableRooms.has(room.id));
+        setAvailableRooms(validRooms);
+        console.log(validRooms);
+    }
+
+    const sendRequest = () => {
+        
     }
 
     return (
-        <div className="homepage">
-            New Reservation
-            <button onClick={() => navigate(-1)}>Go back</button>
+        <div className="homepage" id="new-reservation-page">
+            <div id="top"><button onClick={() => navigate(-1)} className="btn btn-ordinary" id="back-btn"><span className="btn-text">Previous Page</span></button></div>
+            <div className="page-title">Submit a New Reservation Request</div>
             <div className="steps">
                 <div className="date-picker step" id="step1">
-                    <div className="date-text">Select reservation day</div>
-                    <DatePicker
-                        dateFormat="yyyy/MM/dd"
-                        showIcon
-                        isClearable
-                        startDate={new Date("2023-06-01")}
-                        minDate={new Date("2023-06-01")}
-                        selected={selectedDate}
-                        onChange={(date) => handleDateSelect(date)}
-                        withPortal
-                        filterDate={isWeekday}
-                    />
+                    <div className="step-text">
+                        <div className="step-no">1.</div>
+                        <div className="date-text"> Select reservation day and time</div>
+                    </div>
+                    <div className="step-content">
+                        <DatePicker
+                            className="calendar"
+                            dateFormat="yyyy-MM-dd HH:mm aa"
+                            showIcon
+                            isClearable
+                            startDate={new Date("2023-06-01")}
+                            minDate={new Date("2023-06-01")}
+                            selected={selectedDate}
+                            onChange={(date) => setSelectedDate(date)}
+                            withPortal
+                            filterDate={isWeekday}
+                            showTimeSelect
+                            timeIntervals={60}
+                            minTime={new Date(20223, 1, 1, 8, 0, 0, 0)}
+                            maxTime={new Date(20223, 1, 1, 20, 0, 0, 0)}
+                        />
+                    </div>
                 </div>
-                {!!selectedDate && (<div className="step" id="step2">
-                    Select options
+                {!!selectedDate && (
+                <div className="step" id="step2">
+                    <div className="step-text" id="step-text-2">
+                        <div className="step-no">2.</div>
+                        <div>Select options</div>
+                    </div>
                     <form className="reservation-options" onSubmit={searchAvailability}>
-                        <div>
-                            <label htmlFor="room-size" className="label size-label">Room Size</label>
-                            <input type="number" className="room-size" onChange={e => setRoomSize(e.target.value)}/>
+                        <div className="step-content">
+                            <label htmlFor="duration" className="label duration-label">Reservation Duration (in mins):</label>
+                            <input type="number" className="num-input" placeholder="0" onBlur={e => handleDuration(e.target.value)}/>
                         </div>
-                            <input type="checkbox" className="accessibility" onClick={e => setAccessibility(e.target.checked)}/>
-                            <label htmlFor="accessibility" className="label accessibility-label">Wheelchair accessible</label>
-                        <div>
+                        <div className="step-content">
+                            <label htmlFor="room-size" className="label size-label">Required Capacity:</label>
+                            <input type="number" className="num-input" placeholder="0" onChange={e => setRoomSize(e.target.value)}/>
+                        </div>
+                        <div className="step-content">
+                            <label htmlFor="accessibility" className="label accessibility-label">Wheelchair accessible:</label>
+                            <input type="checkbox" className="check-input" onClick={e => setAccessibility(e.target.checked)}/>
+
+                        </div>
+                        <div className="step-content">
                             <label htmlFor="purpose" className="label purpose-label">Purpose</label>
-                            <input type="text" className="purpose purpose-input" onChange={e => setPurpose(e.target.value)}/>
+                            <textarea type="text" className="purpose purpose-input" onChange={e => setPurpose(e.target.value)}/>
                         </div>
-                        <button className="btn search-btn">Search Availability</button>
+                        <button className="btn search-btn btn-ordinary"><span className="btn-text">Search Availability</span></button>
                     </form>
                 </div>)}
-                {showAvailableRooms && (<div className="step" id="step3">
-                    Select Room and Timeslots
-                    
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-2"></div>
-                            {rooms.map((room) => (
-                            <div className="col" key={room.name}>{room.name}</div>
-                            ))}
-                        </div>
-                        {timeSlots.map((time) => (
-                            <div className="row" key={time}>
-                            <div className="col-2">{time}</div>
-                            {rooms.map((room) => (
-                                <div className="col" key={`${room.name}-${time}`}></div>
-                            ))}
-                            </div>
-                        ))}
-                        </div>
-                    </div>)}
+                {showAvailableRooms && (
+                    !availableRooms.length ? 
+                    (<div className="results"><div className="no-rooms step">No rooms available</div></div>) :
+                    (<div className="results"><div className="rooms step" id="step3">
+                        <div className="step-text">
+                        <div className="step-no">3.</div>
+                        <div id="select-room">Select an available Room from the list:</div>
+                    </div>
+                        {
+                            <Table bordered hover style={{borderColor: 'rgb(198, 218, 255)'}}>
+                            <thead>
+                              <tr>
+                                <th>Name</th>
+                                <th>Capacity</th>
+                                <th>Accessibility</th>
+                                <th>Floor</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {availableRooms.map((room) => (
+                                <tr key={room.id}
+                                    onClick={() => setSelectedRoom(room)}
+                                >
+                                  <td>{room.name}</td>
+                                  <td>{room.capacity}</td>
+                                  <td>{room.accessibility ? "Yes" : "No"}</td>
+                                  <td>{room.floor}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </Table>
+                        }
+                        {selectedRoom && (<button className="btn btn-ordinary send-req-btn" onClick={() => sendRequest()}><span className="btn-text">Make Reservation</span></button>)}
+                    </div></div>))}
             </div>
-
-            {/* <Calendar
-                localizer={localizer}
-                startAccessor="start"
-                endAccessor="end"
-                defaultView="day"
-                views={{day: true, work_week: true}}
-                style={{ height: 500 }}
-                resources={rooms}
-                min={new Date(2023, 6, 1, 8, 0, 0, 0)}
-                max={new Date(2023, 6, 30, 21, 0, 0, 0)}
-                events={activeRequests}
-            /> */}
         </div>
     )
 }

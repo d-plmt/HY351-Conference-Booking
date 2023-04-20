@@ -1,11 +1,108 @@
-/* .homepage {
-    height: 90vh;
-    width: 60vw;
-    margin: 0 20vw;
-    border: 1px solid black;
-} */
+.homepage {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
 
-.rbc-calendar {
-    background-color: white;
+.btn-ordinary {
+    /* background-color: rgb(198, 218, 255); */
+    border-radius: 30px;
+    font-weight: 500;
+    box-shadow: rgba(100, 100, 111, 0.2) 2px 2px 10px 2px;
+}
 
+.btn-text {
+    font-weight: 600;
+}
+
+#top {
+    display: flex;
+    justify-content: flex-end;
+
+}
+  
+#back-btn {
+    width: 200px;
+}
+
+.page-title {
+    font-size: larger;
+    font-weight: 600;
+    padding: 40px 0 20px 0;
+}
+
+.steps {
+    padding: 0 0 0 20px;
+}
+
+.step-text {
+    display: flex;
+    gap: 20px;
+    padding: 0 0 10px 0;
+}
+
+.step-content {
+    padding: 0 0 10px 40px;
+    display: flex;
+    justify-content: space-between;
+    min-height: 47px;
+}
+
+.calendar {
+    border-radius: 20px;
+    border: none;
+    background-color: #f1f8fa;
+    box-shadow: rgba(100, 100, 111, 0.2) 2px 2px 10px 2px;
+}
+
+#step-text-2 {
+    padding-top: 20px;
+}
+
+.num-input {
+    margin: 0 200px 0 0;
+    width: 80px;
+    border-radius: 10px;
+    border: 2px solid rgb(198, 218, 255);
+    background-color: #f4f7f8;
+}
+
+.check-input {
+    margin: 0 260px 0 0;
+    height: 20px;
+    width: 20px;
+    border-radius: 10px;
+}
+
+textarea {
+    font-size: 16px;
+    height: 100px;
+    width: 280px;
+    border-radius: 10px;
+    border: 2px solid rgb(198, 218, 255);
+    font-size: 14px;
+}
+
+.search-btn {
+    margin-left: 40px;
+    width: 220px;
+    height: 42px;
+}
+
+.no-rooms {
+    margin: 20px 40px;
+}
+
+#step3 {
+    margin: 40px 0 30px 0;
+}
+
+.table{
+    border-color: rgb(198, 218, 255);
+}
+
+.send-req-btn {
+    margin: 10px 40px;
+    height: 48px;
+    width: 280px;
+    font-size: 20px;
+    background-color: rgb(198, 218, 255);
 }

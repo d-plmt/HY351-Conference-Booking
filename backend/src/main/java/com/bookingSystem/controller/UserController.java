@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,6 +49,7 @@ public class UserController {
 
     //  USERS //
     
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/users")
     List<UserDTO> all() {
         List<User> users = userRepo.findAll();
@@ -58,17 +60,20 @@ public class UserController {
         return dtos;
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/users/{id}")
     User findUser(@PathVariable Integer id) {
         return userRepo.findById(id)
         .orElseThrow(() -> new RuntimeException());
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/users")
     User newUser(@RequestBody User newUser) {
         return userRepo.save(newUser);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/users/{id}")
     User updateUser(@RequestBody User newUser, @PathVariable Integer id) {
         return userRepo.findById(id)
@@ -86,6 +91,7 @@ public class UserController {
 
     // EMPLOYEES //
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/employees")
     List<EmployeeDTO> employeeAll() {
         List<Employee> employees = employeeRepo.findAll();
@@ -96,17 +102,20 @@ public class UserController {
         return dtos;
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/employees/{id}")
     Employee findEmployee(@PathVariable Integer id) {
         return employeeRepo.findById(id)
         .orElseThrow(() -> new RuntimeException());
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/employees")
     Employee newEmployee(@RequestBody Employee newEmployee) {
         return employeeRepo.save(newEmployee);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/employees/{id}")
     Employee updateEmployee(@RequestBody Employee newEmployee, @PathVariable Integer id) {
         return employeeRepo.findById(id)
@@ -122,6 +131,7 @@ public class UserController {
 
     // ADMINS //
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/admins")
     List<AdminDTO> adminAll() {
         List<Admin> admins = adminRepo.findAll();
@@ -132,12 +142,14 @@ public class UserController {
         return dtos;
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/admins/{id}")
     Admin findAdmin(@PathVariable Integer id) {
         return adminRepo.findById(id)
         .orElseThrow(() -> new RuntimeException());
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/admins")
     Admin newAdmin(@RequestBody Admin newAdmin) {
         return adminRepo.save(newAdmin);
