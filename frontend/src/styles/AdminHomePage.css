@@ -4,3 +4,34 @@
     padding: 20px;
     /* border: 1px solid black; */
 }
+
+.admin-table {
+    border-color: 'rgb(198, 218, 255)';
+}
+
+.admin-td {
+    overflow-y: auto;
+}
+
+.td-num {
+    text-align: right;
+}
+
+.action-btn-wrap {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.action-btn {
+    height: auto;
+    width: auto;
+    padding: 5px;
+}
+
+.bi-check-circle {
+    color: rgb(24, 201, 24);
+}
+
+.bi-x-circle {
+    color:rgb(230, 20, 20)
+}

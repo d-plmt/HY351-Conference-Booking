@@ -61,10 +61,28 @@ public class UserController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/users/{id}")
+    // @GetMapping("/users/{id}")
     User findUser(@PathVariable Integer id) {
         return userRepo.findById(id)
         .orElseThrow(() -> new RuntimeException());
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/users/{id}")
+    UserDTO findUserDTO(@PathVariable Integer id) {
+        User user = userRepo.findById(id)
+        .orElseThrow(() -> new RuntimeException());
+        UserDTO dto = new UserDTO();
+        return dto.convertToDTO(user);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/users/email/{email}")
+    UserDTO findUserDTO(@PathVariable String email) {
+        User user = userRepo.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException());
+        UserDTO dto = new UserDTO();
+        return dto.convertToDTO(user);
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
@@ -103,10 +121,19 @@ public class UserController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/employees/{id}")
+    // @GetMapping("/employees/{id}")
     Employee findEmployee(@PathVariable Integer id) {
         return employeeRepo.findById(id)
         .orElseThrow(() -> new RuntimeException());
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/employees/{id}")
+    EmployeeDTO findEmployeeDTO(@PathVariable Integer id) {
+        Employee employee = employeeRepo.findById(id)
+        .orElseThrow(() -> new RuntimeException());
+        EmployeeDTO dto = new EmployeeDTO();
+        return dto.convertToDTO(employee);
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
@@ -143,10 +170,19 @@ public class UserController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/admins/{id}")
+    // @GetMapping("/admins/{id}")
     Admin findAdmin(@PathVariable Integer id) {
         return adminRepo.findById(id)
         .orElseThrow(() -> new RuntimeException());
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/admins/{id}")
+    AdminDTO findAdminDTO(@PathVariable Integer id) {
+        Admin admin = adminRepo.findById(id)
+        .orElseThrow(() -> new RuntimeException());
+        AdminDTO dto = new AdminDTO();
+        return dto.convertToDTO(admin);
     }
 
     @CrossOrigin(origins = "http://localhost:3000")

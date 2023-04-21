@@ -43,7 +43,5 @@ public class Room {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "id.room")
     private List<Reservation> reservations;
-
-
 }
 

@@ -35,4 +35,5 @@ public class ReservationId implements Serializable {
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
+
 }

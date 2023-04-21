@@ -3,6 +3,7 @@ package com.bookingSystem.controller;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,6 +27,10 @@ import com.bookingSystem.reservation.ReservationRepository;
 import com.bookingSystem.reservationRequest.ReservationRequest;
 import com.bookingSystem.reservationRequest.ReservationRequestId;
 import com.bookingSystem.reservationRequest.ReservationRequestRepository;
+import com.bookingSystem.room.Room;
+import com.bookingSystem.room.RoomRepository;
+import com.bookingSystem.user.Employee;
+import com.bookingSystem.user.EmployeeRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -39,6 +44,12 @@ public class ReservationController {
 
     @Autowired
     private final ReservationRequestRepository reqRepo;
+
+    @Autowired
+    private final RoomRepository roomRepo;
+
+    @Autowired
+    private final EmployeeRepository employeeRepo;
 
     @Autowired
     private final RequestDTO reqDTO;
@@ -66,21 +77,32 @@ public class ReservationController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/reservations")
-    Reservation newRes(@RequestBody Reservation newRes) {
-        return resRepo.save(newRes);
+    ReservationDTO newRes(@RequestBody Reservation newRes) {
+        Room room = roomRepo.findById(newRes.getId().getRoom().getId())
+                    .orElseThrow(() -> new RuntimeException());
+        Employee employee = employeeRepo.findById(newRes.getId().getEmployee().getId())
+                    .orElseThrow(() -> new RuntimeException());
+        newRes.setId(new ReservationId(newRes.getId().getDate(), employee, room));
+        ReservationDTO dto = new ReservationDTO();
+        return dto.convertToDTO(resRepo.save(newRes));
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PutMapping("/reservations/{id}")
-    Reservation updateRes(@RequestBody Reservation newRes, @PathVariable ReservationId id) {
-        return resRepo.findById(id)
+    @PutMapping("/reservations/{date}-{employeeId}-{roomId}")
+    Reservation updateRes(@RequestBody Reservation newRes, @PathVariable Date date, @PathVariable Employee employeeId, @PathVariable Room roomId) {
+        Employee employee = employeeRepo.findById(employeeId.getId())
+                    .orElseThrow(() -> new RuntimeException());
+        Room room = roomRepo.findById(roomId.getId())
+                    .orElseThrow(() -> new RuntimeException());
+        ReservationId resId = new ReservationId(date, employee, room);
+        return resRepo.findById(resId)
         .map(res -> {
           res.setPurpose(newRes.getPurpose());
           res.setTimeSlots(newRes.getTimeSlots());
           return resRepo.save(res);
         })
         .orElseGet(() -> {
-            newRes.setId(id);
+            newRes.setId(resId);
             return resRepo.save(newRes);
         });
     }
@@ -126,20 +148,26 @@ public class ReservationController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PutMapping("/requests/{id}")
-    ReservationRequest updateReq(@RequestBody ReservationRequest newReq, @PathVariable ReservationRequestId id) {
-        return reqRepo.findById(id)
+    @PutMapping("/requests/{date}-{employeeId}-{roomId}")
+    RequestDTO updateReq(@RequestBody ReservationRequest newReq, @PathVariable Date date, @PathVariable Employee employeeId, @PathVariable Room roomId) {
+        Employee employee = employeeRepo.findById(employeeId.getId())
+                    .orElseThrow(() -> new RuntimeException());
+        Room room = roomRepo.findById(roomId.getId())
+                    .orElseThrow(() -> new RuntimeException());
+        ReservationRequestId reqId = new ReservationRequestId(date, employee, room);
+        RequestDTO dto = new RequestDTO();
+        return reqRepo.findById(reqId)
         .map(req -> {
           req.setPurpose(newReq.getPurpose());
           req.setTimeSlots(newReq.getTimeSlots());
           req.setAdmin(newReq.getAdmin());
           req.setDeniedReason(newReq.getDeniedReason());
           req.setStatus(newReq.getStatus());
-          return reqRepo.save(req);
+          return dto.convertToDTO(reqRepo.save(req));
         })
         .orElseGet(() -> {
-            newReq.setId(id);
-            return reqRepo.save(newReq);
+            newReq.setId(reqId);
+            return dto.convertToDTO(reqRepo.save(newReq));
         });
     }
 

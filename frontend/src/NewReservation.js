@@ -4,11 +4,8 @@ import { useEffect, useState } from 'react';
 import { Table } from "react-bootstrap";
 import moment from 'moment'
 import './styles/NewReservation.css';
-
-
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import './styles/NewReservation.css';
 import "react-datepicker/dist/react-datepicker.css";
+
 export const NewReservation = () => {
     const navigate = useNavigate();
 
@@ -222,7 +219,7 @@ export const NewReservation = () => {
                             </tbody>
                           </Table>
                         }
-                        {selectedRoom && (<button className="btn btn-ordinary send-req-btn" onClick={() => sendRequest()}><span className="btn-text">Make Reservation</span></button>)}
+                        {!!selectedRoom && (<button className="btn btn-ordinary send-req-btn" onClick={() => sendRequest()}><span className="btn-text">Make Reservation</span></button>)}
                     </div></div>))}
             </div>
         </div>

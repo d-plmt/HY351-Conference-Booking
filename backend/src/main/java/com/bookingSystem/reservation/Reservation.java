@@ -21,6 +21,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.Setter;
+import lombok.AccessLevel;
 
 
 @Setter
@@ -45,6 +46,7 @@ public class Reservation {
         updatable = false)
     private Employee employee;
 
+    
     @ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
         name = "reservation_timeslot", 
@@ -56,6 +58,11 @@ public class Reservation {
             @JoinColumn(name = "timeslot_id") 
         }
     )
+    @Getter(AccessLevel.NONE)
     List<TimeSlot> timeSlots = new ArrayList<>();
+
+    public List<TimeSlot> getTimeSlots() {
+        return this.timeSlots;
+    }
 
 }

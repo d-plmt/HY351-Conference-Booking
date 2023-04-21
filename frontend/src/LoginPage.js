@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
-import loginPageCss from './styles/LoginPage.css'
 import {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import './styles/LoginPage.css';
 
-export const LoginPage = (props) => {
+export const LoginPage = () => {
     const navigate = useNavigate();
     const [email, setEmail]         = useState('');
     const [password, setPassword]   = useState('');
@@ -12,25 +11,40 @@ export const LoginPage = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            sessionStorage.setItem('userType', 'admin');
-            sessionStorage.setItem('user', 'user1');
-            navigate('/');
-            // const response = await fetch('', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-type': 'application/json'
-            //     },
-            //     body: JSON.stringify({email, password})
-            // });
-            // const data = response.json();
-            // if (data.success) {
-
-
-            //     //redirect page here
-            // }
-            // else {
-            //     setError(data.message);
-            // }
+            sessionStorage.clear();
+            const userResponse = await fetch(`http://localhost:8080/users/email/${email}`);
+            if (userResponse.status === 200) {
+                const userData = await userResponse.json();
+                if (password === userData.password) {
+                    const adminResponse = await fetch(`http://localhost:8080/admins/${userData.id}`);
+                    
+                    if (adminResponse.status === 200) {
+                        
+                        sessionStorage.setItem('userType', 'admin');
+                        sessionStorage.setItem('userId', userData.id);
+                        console.log(sessionStorage);
+                        navigate('/');
+                    }
+                    else {
+                        
+                        const employeeResponse = await fetch(`http://localhost:8080/employees/${userData.id}`);
+                        if (employeeResponse.status === 200) {
+                            sessionStorage.setItem('userType', 'employee');
+                            sessionStorage.setItem('userId', userData.id);
+                            navigate('/');
+                        }
+                        else {
+                            throw new Error('Error!');
+                        }
+                    }
+                }
+                else {
+                    throw new Error('Incorrect password!');
+                }
+            }
+            else {
+                throw new Error('This email does not correspond to any account!');
+            }
         }
         catch (error) {
             console.error(error);

@@ -1,8 +1,7 @@
 import './styles/HomePage.css'
 import { AdminHomePage } from './AdminHomePage'
 import { EmployeeHomePage } from './EmployeeHomePage'
-import { LoginPage } from './LoginPage'
-import {Routes, Route, Link, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 export const HomePage = () => {
     const navigate = useNavigate();

@@ -25,11 +25,14 @@ public class UserDTO {
 
     private String phone;
 
+    private String password;
+
     public UserDTO convertToDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
+        dto.setPassword(user.getPassword());
         dto.setEmail(user.getEmail());
         dto.setPhone(user.getPhone());
         return dto;
