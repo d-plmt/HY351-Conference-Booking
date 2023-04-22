@@ -5,6 +5,8 @@ import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
 import { App } from './App';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

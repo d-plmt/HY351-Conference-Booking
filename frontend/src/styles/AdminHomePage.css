@@ -17,15 +17,15 @@
     text-align: right;
 }
 
-.action-btn-wrap {
+/* .action-btn-wrap {
     display: flex;
     justify-content: space-evenly;
-}
+} */
 
 .action-btn {
     height: auto;
     width: auto;
-    padding: 5px;
+    padding-left: 20px;
 }
 
 .bi-check-circle {
@@ -34,4 +34,12 @@
 
 .bi-x-circle {
     color:rgb(230, 20, 20)
+}
+
+#cancel-tab{
+    color: #cc0404;
+}
+
+.nav-link {
+    color: black;
 }
