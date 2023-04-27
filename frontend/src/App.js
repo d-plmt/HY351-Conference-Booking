@@ -28,7 +28,7 @@ export const App = () => {
         path="/"
         element = {<HomePage/>} />
         <Route path="/login" element={<LoginPage onLogin={handleLogin}/>} />
-        <Route path="/new" element={<NewReservation/>}/>
+        {/* <Route path="/new" element={<NewReservation/>}/> */}
       </Routes>
     </div>
 

@@ -132,8 +132,7 @@ export const NewReservation = () => {
     }
 
     return (
-        <div className="homepage" id="new-reservation-page">
-            <div id="top"><button onClick={() => navigate(-1)} className="btn btn-ordinary" id="back-btn"><span className="btn-text">Previous Page</span></button></div>
+        <div>
             <div className="page-title">Submit a New Reservation Request</div>
             <div className="steps">
                 <div className="date-picker step" id="step1">

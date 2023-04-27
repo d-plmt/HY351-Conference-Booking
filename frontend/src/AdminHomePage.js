@@ -198,7 +198,12 @@ export const AdminHomePage = () => {
             confirmButtonText: 'OK'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                
+                res.id = {
+                    date: res.id.date,
+                    employee: {id: res.id.employeeId},
+                    room: {id: res.id.roomId}
+                }
+                console.log(res);
                 // const reservation = {
                 //     id: {
                 //         date: request.id.date,
@@ -265,7 +270,7 @@ export const AdminHomePage = () => {
                 <Nav.Link eventKey="pending">Pending Requests</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                <Nav.Link eventKey="history" onClick={() => console.log(reviewedRequests)}>Request History</Nav.Link>
+                <Nav.Link eventKey="history">Request History</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
                 <Nav.Link eventKey="cancel"><span id="cancel-tab">Cancel Reservation</span></Nav.Link>
@@ -326,7 +331,7 @@ export const AdminHomePage = () => {
                             <th>End Time</th>
                             <th>Purpose</th>
                             <th>Admin ID</th>
-                            <th>Outcome</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>

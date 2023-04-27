@@ -1,0 +1,16 @@
+#homepage-login-div {
+    display: flex;
+    padding-top: 200px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.homepage-login-btn {
+    background-color: rgb(198, 201, 243);
+    width: 100px;
+    height: 35px;
+    border-radius: 20px;
+    font-weight: 600;
+    margin-top: 20px;
+}

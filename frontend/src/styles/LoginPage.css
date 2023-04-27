@@ -59,3 +59,14 @@
     border-radius: 5px;
     cursor: pointer;
 }
+
+
+.bi-question-circle {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+#p-tooltip {
+    /* display: none; */
+    font-size: 12px;
+}

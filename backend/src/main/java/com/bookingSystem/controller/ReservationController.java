@@ -134,6 +134,18 @@ public class ReservationController {
         return dtos;
     }
 
+    // @CrossOrigin(origins = "http://localhost:3000")
+    // @GetMapping("/requestsByEmployee/{employeeId}")
+    // RequestDTO findReqByEmployee(@PathVariable Employee employeeId) {
+    //     Employee employee = employeeRepo.findById(employeeId.getId())
+    //                 .orElseThrow(() -> new RuntimeException());
+    //     ReservationRequestId reqId = new ReservationRequestId();
+    //     reqId.setEmployee(employee);
+    //     RequestDTO dto = new RequestDTO();
+    //     return dto.convertToDTO(reqRepo.findById(reqId)
+    //         .orElseThrow(() -> new RuntimeException("error")));
+    // }
+
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/requests/{id}")
     ReservationRequest findReq(@PathVariable ReservationRequestId id) {

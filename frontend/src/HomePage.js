@@ -10,7 +10,10 @@ export const HomePage = () => {
             {
                 sessionStorage.getItem('userType') === "admin" ? <AdminHomePage/> :
                 sessionStorage.getItem('userType') === "employee" ? <EmployeeHomePage/>:
-                (<button className="btn homepage-login-btn" onClick={() => navigate("/login")}>Login</button>)
+                (<div id="homepage-login-div">
+                    <div id='homepage-login-msg'>You need to login to continue</div>
+                    <button className="btn homepage-login-btn" onClick={() => navigate("/login")}>Login</button>
+                </div>)
             }
         </>
 
