@@ -5,8 +5,13 @@ import { Table } from "react-bootstrap";
 import moment from 'moment'
 import './styles/NewReservation.css';
 import "react-datepicker/dist/react-datepicker.css";
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
 export const NewReservation = () => {
+
+    const MySwal = withReactContent(Swal)
+
     const navigate = useNavigate();
 
     const [rooms, setRooms] = useState([]);
@@ -60,7 +65,6 @@ export const NewReservation = () => {
         if (timeSlots.length === 0) {
             fetchTimeSlots();      
         }
-        console.log(timeSlots);
 
     }, [timeSlots]);
 
@@ -80,7 +84,6 @@ export const NewReservation = () => {
         if (activeRequests.length === 0) {
             fetchRequests();
         }
-        // console.log(activeRequests);
     }, [activeRequests])
 
     const isWeekday = (date) => {
@@ -103,15 +106,11 @@ export const NewReservation = () => {
         setSelectedTimeSlots(slots);
     }
 
-    const searchAvailability = (e) => {
-        e.preventDefault();
-        setShowAvailableRooms(true);
-
+    const findValidRooms = () => {
         let validRooms = rooms.filter((room) => 
             room.capacity >= roomSize &&
             (accessibility? room.accessibility : true)
         );
-
         const unavailableRooms = new Set();
         activeRequests.forEach((request) => {
             if (request.id.date === moment(selectedDate).format('YYYY-MM-DD') && validRooms.some((room => room.id === request.id.roomId))) {
@@ -123,11 +122,79 @@ export const NewReservation = () => {
             }
         });
         validRooms = validRooms.filter((room) => !unavailableRooms.has(room.id));
-        setAvailableRooms(validRooms);
-        console.log(validRooms);
+        return validRooms;
     }
 
-    const sendRequest = () => {
+    const searchAvailability = () => {
+        console.log("test");
+        setShowAvailableRooms(true);
+        const validRooms = findValidRooms();
+        setAvailableRooms(validRooms);
+    }
+
+    const sendRequest = async () => {
+        if (purpose === "") {
+            MySwal.fire({
+                title: 'Reservation purpose',
+                text: 'You need to provide a purpose for your reservation request',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                showCancelButton: false
+            });
+            return;
+        }
+        MySwal.fire({
+            title: 'Make New Reservation Request?',
+            text: `Room ${selectedRoom.id} will be reserved on ${selectedDate} from ${timeSlots[0].startTime}:00 to ${timeSlots[timeSlots.length-1].endTime}:00`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Accept' 
+        }).then (async (result) => {
+            if (result.isConfirmed) {
+                const request = {
+                    id: {
+                        date: moment(selectedDate).format("YYYY-MM-DD"),
+                        employee: {id: sessionStorage.getItem("userId")},
+                        room: {id: selectedRoom.id.toString()}
+                    },
+                    purpose: purpose,
+                    timeSlots: timeSlots,
+                    status: "pending",
+                    admin: null
+                };
+        
+                const postRequest = {
+                    method: 'post',
+                    headers: {'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': 'http://localhost:3000'},
+                    body: JSON.stringify(request)
+                };
+                const postResponse = await fetch(`http://localhost:8080/requests`, postRequest);
+                if (postResponse.status === 200) {
+                    const response = await fetch(`http://localhost:8080/requests`);
+                    const responseData = await response.json();
+                    setActiveRequests(await responseData);
+                    const validRooms = findValidRooms();
+                    setAvailableRooms(validRooms);
+
+                    MySwal.fire(
+                        'Done!',
+                        'The Reservation Request has been sent',
+                        'success'
+                    )
+                }
+                else {
+                    MySwal.fire(
+                        'Rejected!',
+                        'The Reservation Request could not be sent',
+                        'error'
+                    )
+                }
+
+            }
+        })
         
     }
 
@@ -165,7 +232,7 @@ export const NewReservation = () => {
                         <div className="step-no">2.</div>
                         <div>Select options</div>
                     </div>
-                    <form className="reservation-options" onSubmit={searchAvailability}>
+                    <div className="reservation-options">
                         <div className="step-content">
                             <label htmlFor="duration" className="label duration-label">Reservation Duration (in mins):</label>
                             <input type="number" className="num-input" placeholder="0" onBlur={e => handleDuration(e.target.value)}/>
@@ -183,8 +250,8 @@ export const NewReservation = () => {
                             <label htmlFor="purpose" className="label purpose-label">Purpose</label>
                             <textarea type="text" className="purpose purpose-input" onChange={e => setPurpose(e.target.value)}/>
                         </div>
-                        <button className="btn search-btn btn-ordinary"><span className="btn-text">Search Availability</span></button>
-                    </form>
+                        <button className="btn search-btn btn-ordinary"><span className="btn-text" onClick={() => searchAvailability()}>Search Availability</span></button>
+                    </div>
                 </div>)}
                 {showAvailableRooms && (
                     !availableRooms.length ? 
@@ -208,6 +275,7 @@ export const NewReservation = () => {
                               {availableRooms.map((room) => (
                                 <tr key={room.id}
                                     onClick={() => setSelectedRoom(room)}
+                                    className ={selectedRoom && selectedRoom.id === room.id ? "selected-row" : ""}
                                 >
                                   <td>{room.name}</td>
                                   <td>{room.capacity}</td>

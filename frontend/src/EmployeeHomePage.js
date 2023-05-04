@@ -13,7 +13,7 @@ export const EmployeeHomePage = () => {
     useEffect(() => {
         const fetchRequests = async () => {
             try {
-                const response = await fetch('http://localhost:8080/requests');
+                const response = await fetch(`http://localhost:8080/requests/employee/${sessionStorage.getItem("userId")}`);
                 const data = await response.json();
 
                 setRequestHistory(data);
@@ -32,10 +32,6 @@ export const EmployeeHomePage = () => {
 
     return (
         <div className="homepage">
-            {/* <div>Employee Homepage</div> */}
-            {/* <Link to="/new">
-                <button className="btn new-reservation-btn">New Reservation</button>
-            </Link> */}
             <Tab.Container activeKey={activeTab} onSelect={handleSelectTab}>
                 <Nav variant="tabs" className="mb-4">
                     <Nav.Item>

@@ -64,7 +64,7 @@ export const LoginPage = () => {
                 <input className="login-input" type="password" placeholder="Password" id="password" value={password} onChange={e => setPassword(e.target.value)}/>
 
                 <button className="btn login-btn">
-                    Log In
+                    Login
                 </button>
             </form>
         </div>

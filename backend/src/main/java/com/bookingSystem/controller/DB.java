@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bookingSystem.DTO.RequestDTO;
-import com.bookingSystem.DTO.ReservationDTO;
-import com.bookingSystem.reservation.Reservation;
-import com.bookingSystem.reservation.ReservationId;
 import com.bookingSystem.reservationRequest.ReservationRequest;
 import com.bookingSystem.reservationRequest.ReservationRequestId;
 import com.bookingSystem.room.Room;
@@ -55,7 +52,7 @@ public class DB {
     }
 
     @Transactional
-    // @GetMapping("/init/users")
+    @GetMapping("/init/users")
     public List<Object> initUsers() {
         User user;
         Admin admin;
@@ -108,7 +105,7 @@ public class DB {
 
 
     @Transactional
-    // @GetMapping("/init/rooms")
+    @GetMapping("/init/rooms")
     public List<Object> initRooms() {
 
         Room room;
@@ -140,7 +137,7 @@ public class DB {
 
 
     @Transactional
-    // @GetMapping("/init/timeslots")
+    @GetMapping("/init/timeslots")
     public List<Object> initTimeSlots() {
         TimeSlot timeSlot;
         List<Object> timeSlotList = new ArrayList<>();
@@ -199,7 +196,7 @@ public class DB {
     @Transactional
     @GetMapping("/init/requests")
     public List<RequestDTO> initRequests() {
-        ReservationRequest request;
+        RequestDTO request;
         ReservationRequestId requestId; 
         Employee employee;
         Room room;
@@ -211,7 +208,7 @@ public class DB {
         requestId = new ReservationRequestId(Date.valueOf(LocalDate.of(2023, 6, 15)), employee, room);
         request = reservationController.newReq(new ReservationRequest(requestId, "training for new employees", "pending", null, null, employee, addTimeSlots(new int[] {1,2,3})));
 
-        requestList.add(dto.convertToDTO(request));
+        requestList.add(request);
 
 
         employee = userController.findEmployee(4);
@@ -219,13 +216,13 @@ public class DB {
         requestId = new ReservationRequestId(Date.valueOf(LocalDate.of(2023, 6, 15)), employee, room);
         request = reservationController.newReq(new ReservationRequest(requestId,
             "annual product review", "pending", null, null, employee, addTimeSlots(new int[] {6, 7})));
-        requestList.add(dto.convertToDTO(request));
+        requestList.add(request);
 
         employee = userController.findEmployee(7);
         room = roomController.find(4);
         requestId = new ReservationRequestId(Date.valueOf(LocalDate.of(2023, 6, 15)), employee, room);
         request = reservationController.newReq(new ReservationRequest(requestId, "teleconference with US department", "pending", null, null, employee, addTimeSlots(new int[] {10, 11, 12, 13})));
-        requestList.add(dto.convertToDTO(request));
+        requestList.add(request);
 
 
         employee = userController.findEmployee(5);
@@ -233,58 +230,58 @@ public class DB {
         requestId = new ReservationRequestId(Date.valueOf(LocalDate.of(2023, 6, 16)), employee, room);
         request = reservationController.newReq(new ReservationRequest(
             requestId, "IT talk: phising scam awareness", "pending", null, null, employee, addTimeSlots(new int[] {5})));
-        requestList.add(dto.convertToDTO(request));
+        requestList.add(request);
 
         employee = userController.findEmployee(2);
         room = roomController.find(1);
         requestId = new ReservationRequestId(Date.valueOf(LocalDate.of(2023, 6, 16)), employee, room);
         request = reservationController.newReq(new ReservationRequest(requestId, "IT talk: 'you didn't really win an iphone 11'", "pending", null, null, employee, addTimeSlots(new int[] {4,5})));
-        requestList.add(dto.convertToDTO(request));
+        requestList.add(request);
 
         employee = userController.findEmployee(1);
         room = roomController.find(5);
         requestId = new ReservationRequestId(Date.valueOf(LocalDate.of(2023, 6, 14)), employee, room);
         request = reservationController.newReq(new ReservationRequest(requestId, "interviewing new candidates", "pending", null, null, employee, addTimeSlots(new int[] {1, 2, 3, 4, 5, 6, 7})));
-        requestList.add(dto.convertToDTO(request));
+        requestList.add(request);
 
         employee = userController.findEmployee(6);
         room = roomController.find(5);
         requestId = new ReservationRequestId(Date.valueOf(LocalDate.of(2023, 6, 14)), employee, room);
         request = reservationController.newReq(new ReservationRequest(requestId, "interviewing new candidates", "pending", null, null, employee, addTimeSlots(new int[] {8, 9, 10, 11, 12})));
-        requestList.add(dto.convertToDTO(request));
+        requestList.add(request);
 
         employee = userController.findEmployee(3);
         room = roomController.find(6);
         requestId = new ReservationRequestId(Date.valueOf(LocalDate.of(2023, 6, 14)), employee, room);
         request = reservationController.newReq(new ReservationRequest(requestId, "new product presentation", "pending", null, null, employee, addTimeSlots(new int[] {5,6,7,8})));
-        requestList.add(dto.convertToDTO(request));
+        requestList.add(request);
 
         employee = userController.findEmployee(8);
         room = roomController.find(6);
         requestId = new ReservationRequestId(Date.valueOf(LocalDate.of(2023, 6, 14)), employee, room);
         request = reservationController.newReq(new ReservationRequest(requestId,
             "new product cost analysis", "pending", null, null, employee, addTimeSlots(new int[] {9, 10, 11, 12})));
-        requestList.add(dto.convertToDTO(request));
+        requestList.add(request);
 
         employee = userController.findEmployee(6);
         room = roomController.find(2);
         requestId = new ReservationRequestId(Date.valueOf(LocalDate.of(2023, 6, 14)), employee, room);
         request = reservationController.newReq(new ReservationRequest(
             requestId, "conflict resolution talk", "pending", null, null, employee, addTimeSlots(new int[] {3,4})));
-        requestList.add(dto.convertToDTO(request));
+        requestList.add(request);
 
         employee = userController.findEmployee(7);
         room = roomController.find(1);
         requestId = new ReservationRequestId(Date.valueOf(LocalDate.of(2023, 6, 14)), employee, room);
         request = reservationController.newReq(new ReservationRequest(
             requestId, "budget crisis conference with CEO", "pending", null, null, employee, addTimeSlots(new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9})));
-        requestList.add(dto.convertToDTO(request));
+        requestList.add(request);
 
         employee = userController.findEmployee(2);
         room = roomController.find(3);
         requestId = new ReservationRequestId(Date.valueOf(LocalDate.of(2023, 6, 14)), employee, room);
         request = reservationController.newReq(new ReservationRequest(requestId, "IT talk: 'why IT is the best department in the company'", "pending", null, null, employee, addTimeSlots(new int[] {4,5,6,7,8})));
-        requestList.add(dto.convertToDTO(request));
+        requestList.add(request);
 
         return requestList;
     }

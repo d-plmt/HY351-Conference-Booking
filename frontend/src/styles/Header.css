@@ -10,6 +10,14 @@
     color:rgb(64, 64, 64);
 }
 
-img {
+.header-mid {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
     height: 85%;
 }
+

@@ -3,13 +3,15 @@ package com.bookingSystem.controller;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,10 +36,15 @@ import com.bookingSystem.user.EmployeeRepository;
 
 import lombok.AllArgsConstructor;
 
+
 @RestController
 @AllArgsConstructor
+@Transactional
 // @RequestMapping("/reservation")
 public class ReservationController {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     private final ReservationRepository resRepo;
@@ -155,9 +162,16 @@ public class ReservationController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/requests")
-    ReservationRequest newReq(@RequestBody ReservationRequest newReq) {
-        return reqRepo.save(newReq);
+    RequestDTO newReq(@RequestBody ReservationRequest newReq) {
+        RequestDTO dto = new RequestDTO();
+        Room room = roomRepo.findById(newReq.getId().getRoom().getId())
+        .orElseThrow(() -> new RuntimeException());
+        Employee employee = employeeRepo.findById(newReq.getId().getEmployee().getId())
+        .orElseThrow(() -> new RuntimeException());
+        newReq.setId(new ReservationRequestId(newReq.getId().getDate(), employee, room));
+        return dto.convertToDTO(reqRepo.save(newReq));
     }
+
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/requests/{date}-{employeeId}-{roomId}")
@@ -183,15 +197,38 @@ public class ReservationController {
         });
     }
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @CrossOrigin(origins = "http://localhost:3000")
-    @DeleteMapping("/requests/{date}+{booked_by}+{room_id}")
-    void deleteReservationRequestTimeSlots(@PathVariable Date date, @PathVariable Integer booked_by, @PathVariable Integer room_id) {
-        String sql = "DELETE FROM reservation_request_timeslot WHERE reservation_date = '"+date+"' AND booked_by = "+booked_by+" AND room_id = "+room_id+";";
-        Query query = entityManager.createNativeQuery(sql);
-        query.executeUpdate();
+    @GetMapping("/requests/employee/{employeeId}")
+    List<RequestDTO> getRequestsByEmployee(@PathVariable Employee employeeId) {
+        List<RequestDTO> dtos = new ArrayList<>();
+        Employee employee = employeeRepo.findById(employeeId.getId())
+                    .orElseThrow(() -> new RuntimeException());
+        List<ReservationRequest> requests = reqRepo.findAll();
+        for (ReservationRequest request: requests) {
+            if (request.getEmployee().equals(employee)) {
+                dtos.add(reqDTO.convertToDTO(request));
+            }
+            
+        }
+        return dtos;
+    }
+
+
+    @Transactional
+    @Modifying
+    @CrossOrigin(origins = "http://localhost:3000")
+    @DeleteMapping("/requests/delete/{date}-{booked_by}-{room_id}")
+    void deleteReservationRequestTimeSlots(@PathVariable Date date, @PathVariable Integer booked_by, @PathVariable Integer room_id) {  
+        Session session = entityManager.unwrap(Session.class);
+        Query query = session.createQuery("delete from reservation_request_timeslot r where r.reservation_date = :date and r.room_id = :roomId and r.booked_by = :bookedBy");
+        query.setParameter("date", date);
+        query.setParameter("roomId", room_id);
+        query.setParameter("bookedBy", booked_by);
+        int rowsDeleted = query.executeUpdate();
+
+        // sql = "DELETE FROM reservation_request WHERE date ='"+date+"' AND booked_by = '"+booked_by+" AND room_id = "+room_id+";";
+        // query = entityManager.createNativeQuery(sql);
+        // query.executeUpdate();
     }
 
 }
