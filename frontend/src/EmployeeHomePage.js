@@ -1,14 +1,22 @@
 import { TabContent, TabPane } from 'react-bootstrap';
 import './styles/EmployeeHomePage.css';
-import {Routes, Route, Link} from 'react-router-dom';
 import {NewReservation} from './NewReservation';
 import React, { useEffect, useState } from "react";
 import { Table, Tab, Nav } from "react-bootstrap";
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import moment from 'moment'
 
 export const EmployeeHomePage = () => {
 
+    const MySwal = withReactContent(Swal)
+
     const [activeTab, setActiveTab] = useState("new");
     const [requestHistory, setRequestHistory] = useState([]);
+
+    useEffect(() => {
+
+    }, []);
 
     useEffect(() => {
         const fetchRequests = async () => {
@@ -23,8 +31,38 @@ export const EmployeeHomePage = () => {
             }
         }
 
-        fetchRequests();
-    }, []);
+        if (!requestHistory.length) {
+            fetchRequests();
+        }
+        
+        const today = new Date();
+        const upcomingRequests = [];
+        requestHistory.forEach((request) => {
+            const requestDate = new Date(request.id.date);
+            const diffTime = Math.abs(requestDate-today);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            request.diffDays = diffDays;
+            if (diffDays <= 50) {
+                upcomingRequests.push(request);
+            }
+        })
+        Swal.fire({
+            position: 'top-end',
+            title: 'Upcoming Reservations',
+            html: `${upcomingRequests.map((request) => {
+                return (
+                    `<div>
+                        In <b>${request.diffDays} days:</b>&nbsp;&nbsp;&nbsp;room ${request.id.roomId}&nbsp;&nbsp;&nbsp;${request.timeSlots[0].startTime}:00&nbsp;-&nbsp;${request.timeSlots[request.timeSlots.length-1].endTime}:00
+                    </div>`
+                );
+            }).join('')}`,
+            showConfirmButton: false,
+            width: 450,
+            timerProgressBar: true,
+            timer: 20000,
+            showCloseButton: true,
+        })
+    }, [requestHistory]);
 
     const handleSelectTab = (eventKey) => {
         setActiveTab(eventKey);

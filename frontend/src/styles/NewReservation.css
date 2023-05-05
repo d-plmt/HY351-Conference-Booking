@@ -109,4 +109,14 @@ textarea {
 
 .selected-row {
     background-color: rgb(198, 218, 255);
-  }
+}
+
+.react-datepicker__calendar-icon {
+    width: 35px !important;
+    height: 35px !important;
+    margin-left: 10px !important;
+}
+
+input.calendar {
+    padding-left: 40px !important;
+}
