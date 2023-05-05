@@ -145,7 +145,7 @@ export const NewReservation = () => {
         }
         MySwal.fire({
             title: 'Make New Reservation Request?',
-            text: `Room ${selectedRoom.id} will be reserved on ${selectedDate} from ${timeSlots[0].startTime}:00 to ${timeSlots[timeSlots.length-1].endTime}:00`,
+            text: `Room ${selectedRoom.id} will be reserved on ${moment(selectedDate).format('YYYY-MM-DD')} from ${timeSlots[0].startTime}:00 to ${timeSlots[timeSlots.length-1].endTime}:00`,
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',

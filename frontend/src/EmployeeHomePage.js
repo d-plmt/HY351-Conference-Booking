@@ -68,6 +68,25 @@ export const EmployeeHomePage = () => {
         setActiveTab(eventKey);
       };
 
+    const reFetchRequests = async () => {
+        const fetchRequests = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/requests/employee/${sessionStorage.getItem("userId")}`);
+                const data = await response.json();
+
+                setRequestHistory(data);
+            }
+            catch (error) {
+                console.error(error);
+            }
+        }
+
+        if (!requestHistory.length) {
+            fetchRequests();
+        }
+    }
+    
+
     return (
         <div className="homepage">
             <Tab.Container activeKey={activeTab} onSelect={handleSelectTab}>
@@ -84,7 +103,7 @@ export const EmployeeHomePage = () => {
                     <TabPane eventKey="new">
                         <NewReservation></NewReservation>
                     </TabPane>
-                    <TabPane eventKey="history">
+                    <TabPane eventKey="history" onClick={reFetchRequests}>
                         <Table bordered hover className="admin-table">
                             <thead>
                                 <tr>
